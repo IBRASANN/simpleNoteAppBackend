@@ -28,9 +28,9 @@ pipeline {
                 branch 'main'
             }
             steps {
-                bat "docker build -t ${DOCKER_CREDS_USR}/NotesApp:latest ."
+                bat "docker build -t ${DOCKER_CREDS_USR}/simplenotesapp:latest ."
                 bat 'echo %DOCKER_CREDS_PSW% | docker login -u %DOCKER_CREDS_USR% --password-stdin'
-                bat "docker push ${DOCKER_CREDS_USR}/NotesApp:latest"
+                bat "docker push ${DOCKER_CREDS_USR}/simplenotesapp:latest"
             }
         }
     }
