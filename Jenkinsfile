@@ -38,20 +38,16 @@ pipeline {
                      bat "git config user.email 'ibrahim.sanna491@gmail.com'"
                      bat "git config user.name 'IBRASANN'"
 
-                     // 2. Fetch and prepare the develop branch
-                     // This ensures develop exists locally and is up to date
+                     bat "git clean -fd" 
+                     bat "git checkout ."
+
                      bat "git fetch origin develop:develop"
 
-                     // 3. Perform the merge
                      bat "git checkout develop"
                      bat "git merge origin/${env.BRANCH_NAME} --no-edit"
 
-                     // 4. Push to develop using Username:Token auth
-                     // Windows 'bat' uses %VAR% syntax
-                     // Note: Replace 'github.com/your-user/your-repo.git' with your actual path
                      bat "git push https://%GH_USER%:%GH_TOKEN%@github.com/IBRASANN/simpleNoteAppBackend.git develop"
 
-                     // 5. Cleanup the remote task branch
                      bat "git push https://%GH_USER%:%GH_TOKEN%@github.com/IBRASANN/simpleNoteAppBackend.git --delete ${env.BRANCH_NAME}"
                 }
              }
