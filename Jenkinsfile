@@ -30,7 +30,7 @@ pipeline {
              steps {
                  withCredentials([
                     usernamePassword(
-                        credentialsId: 'github-cred',
+                        credentialsId: 'github_cred',
                         usernameVariable: 'GH_USER',
                         passwordVariable: 'GH_TOKEN'
                     )
