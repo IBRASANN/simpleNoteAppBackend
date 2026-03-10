@@ -20,6 +20,7 @@ public class NoteController {
     @GetMapping
     public List<Note> getNotes(Authentication auth) {
         String username = auth.getName();
+        logger.info("User {} requested notes", username);
         return noteService.getNotesForUser(username);
     }
 

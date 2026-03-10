@@ -1,12 +1,11 @@
 com\example\demo\controller\HelloController.class
 com\example\demo\DemoApplication.class
+com\example\demo\service\CustomUserDetailsService.class
+com\example\demo\model\User.class
+com\example\demo\repository\UserRepository.class
+com\example\demo\service\NoteService.class
 com\example\demo\config\SecurityConfig.class
 com\example\demo\repository\NoteRepository.class
 com\example\demo\config\SecurityConfig$1.class
-com\example\demo\service\CustomUserDetailsService.class
-com\example\demo\config\SecurityConfig$2.class
-com\example\demo\model\User.class
 com\example\demo\controller\NoteController.class
 com\example\demo\model\Note.class
-com\example\demo\repository\UserRepository.class
-com\example\demo\service\NoteService.class
