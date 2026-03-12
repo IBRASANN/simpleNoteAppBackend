@@ -1,0 +1,9 @@
+target/
+logs/
+*.log
+*.tmp
+.idea/
+*.iml
+.vscode/
+build/
+out/
