@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+    tools {
+        maven 'mvn_installation'
+    }
+    environment {
+        DOCKER_CREDS = credentials('docker-hub-creds')
+        SONAR_TOKEN = credentials('sonarqube-token')
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Compile & Unit Tests') {
+            steps {
+                bat 'mvn clean test'
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                bat "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN}"
+            }
+        }
+        stage('feature merge approval Gate') {
+            when { branch 'feature/*' }
+            options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            steps {
+                input message: "Merge this feature branch ${env.BRANCH_NAME}?", ok: "Approve"
+            }
+        }
+        stage('Integrate to Develop') {
+             when {
+                 branch 'feature/*'
+             }
+             steps {
+                 withCredentials([
+                    usernamePassword(
+                        credentialsId: 'github_cred',
+                        usernameVariable: 'GH_USER',
+                        passwordVariable: 'GH_TOKEN'
+                    )
+                ]) {
+                     bat "git config user.email 'ibrahim.sanna491@gmail.com'"
+                     bat "git config user.name 'IBRASANN'"
+
+                     bat "git clean -fd" 
+                     bat "git checkout ."
+
+                     bat "git fetch origin develop:develop"
+
+                     bat "git checkout develop"
+                     bat "git merge origin/${env.BRANCH_NAME} --no-edit"
+
+                     bat "git push https://%GH_USER%:%GH_TOKEN%@github.com/IBRASANN/simpleNoteAppBackend.git develop"
+
+                     bat "git push https://%GH_USER%:%GH_TOKEN%@github.com/IBRASANN/simpleNoteAppBackend.git --delete ${env.BRANCH_NAME}"
+                }
+             }
+        }
+        stage('Build & Push Imange to main Docker Hub') {
+            when {
+                branch 'main'
+            }
+            steps {
+                bat "docker build -t ${DOCKER_CREDS_USR}/simplenotesapp:latest ."
+                bat 'echo %DOCKER_CREDS_PSW% | docker login -u %DOCKER_CREDS_USR% --password-stdin'
+                bat "docker push ${DOCKER_CREDS_USR}/simplenotesappbackend:latest"
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline completed successfullly.'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
+        }
+    }
+}
